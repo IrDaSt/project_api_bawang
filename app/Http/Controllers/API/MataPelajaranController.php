@@ -43,7 +43,7 @@ class MataPelajaranController extends Controller
         //     'name' => 'required',
         //     'description' => 'required',
         // ]);
-        return $generatedId = $this->generateIdMataPelajaran();
+        $generatedId = $this->generateIdMataPelajaran();
         $response = DB::insert("
         Insert into mata_pelajaran(id_mata_pelajaran, name, description)
         values(?, ?, ?)
