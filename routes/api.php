@@ -40,6 +40,8 @@ Route::post('user/add', [UserController::class, 'store']);
 Route::get('mata-pelajaran', [MataPelajaranController::class, 'index']);
 Route::get('mata-pelajaran/{id}', [MataPelajaranController::class, 'show']);
 Route::post('mata-pelajaran/add', [MataPelajaranController::class, 'store']);
+Route::post('mata-pelajaran/update/{id}', [MataPelajaranController::class, 'update']);
+Route::delete('mata-pelajaran/delete/{id}', [MataPelajaranController::class, 'destroy']);
 
 Route::get('kelas', [KelasController::class, 'index']);
 

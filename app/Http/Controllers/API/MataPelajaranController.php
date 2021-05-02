@@ -28,22 +28,36 @@ class MataPelajaranController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
         ]);
-        if($validator->fails()){
-            return $validator->errors();
+        if ($validator->fails()) {
+            return [
+                'message' => 'Validation error',
+                'error' => $validator->errors(),
+                'code' => 500,
+            ];
         }
+        // $request->validate([
+        //     'name' => 'required',
+        //     'description' => 'required',
+        // ]);
         $generatedId = $this->generateIdMataPelajaran();
         $response = DB::insert("
         Insert into mata_pelajaran(id_mata_pelajaran, name, description)
         values(?, ?, ?)
         ", [$generatedId, $request->name, $request->description]);
-        if($response == 1){
-            return 200;
+        if ($response == 1) {
+            return [
+                'message' => 'Insert data successful',
+                'code' => 200,
+            ];
         }
-        return 500;
+        return [
+            'message' => 'Database insert error',
+            'code' => 500,
+        ];
     }
 
     /**
@@ -66,7 +80,29 @@ class MataPelajaranController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'description' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return [
+                'message' => 'Validation error',
+                'error' => $validator->errors(),
+                'code' => 500,
+            ];
+        }
+        $response = DB::update('update mata_pelajaran set name=?, description=? where id_mata_pelajaran=?'
+        , [$request->name, $request->description, $id]);
+        if ($response == 1) {
+            return [
+                'message' => 'Update data successful',
+                'code' => 200,
+            ];
+        }
+        return [
+            'message' => 'Database update error',
+            'code' => 500,
+        ];
     }
 
     /**
@@ -77,17 +113,27 @@ class MataPelajaranController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $response = MataPelajaran::where('id_mata_pelajaran', $id)->delete();
+        if($response){
+            return [
+                'message' => 'Data Deleted Successfully',
+                'code' => 200,
+            ];
+        }
+        return [
+            'message' => 'Failed to Delete Data',
+            'code' => 500,
+        ];
     }
 
     private function generateIdMataPelajaran()
     {
         // Get latest id
         $lastData = MataPelajaran::orderBy('id_mata_pelajaran', 'DESC')->first();
-        $lastId = $lastData['id_mata_pelajaran'];
+        $lastId = $lastData['id_mata_pelajaran']; // "MP0020"
         $symbolDigit = 2; // How Many Digit in Symbol
-        $symbol = substr($lastId, 0, $symbolDigit);
-        $numberIdStr = substr($lastId, 2); // "0018"
+        $symbol = substr($lastId, 0, $symbolDigit); // "MP"
+        $numberIdStr = substr($lastId, $symbolDigit); // "0020"
 
         // Hitung numlah nol
         $zeroCount = 0;
@@ -100,7 +146,7 @@ class MataPelajaranController extends Controller
             $zeroCount = $zeroCount + 1;
         }
 
-        $numberIdAdded = $numberIdStr + 1;
+        $numberIdAdded = $numberIdStr + 1; // 21
         if (strlen((string)$numberIdAdded) > strlen((string)$numberIdStr)) $zeroCount -= 1;
         $generatedZero = "";
         while ($zeroCount != 0) {
