@@ -43,7 +43,7 @@ class MataPelajaranController extends Controller
         //     'name' => 'required',
         //     'description' => 'required',
         // ]);
-        $generatedId = $this->generateIdMataPelajaran();
+        return $generatedId = $this->generateIdMataPelajaran();
         $response = DB::insert("
         Insert into mata_pelajaran(id_mata_pelajaran, name, description)
         values(?, ?, ?)
@@ -130,6 +130,9 @@ class MataPelajaranController extends Controller
     {
         // Get latest id
         $lastData = MataPelajaran::orderBy('id_mata_pelajaran', 'DESC')->first();
+        // $lastDataTest = DB::select('select * from mata_pelajaran order by id_mata_pelajaran desc limit 1');
+        // $lastDataTest = $this->toArray($lastDataTest);
+        // return $lastDataTest[0];
         $lastId = $lastData['id_mata_pelajaran']; // "MP0020"
         $symbolDigit = 2; // How Many Digit in Symbol
         $symbol = substr($lastId, 0, $symbolDigit); // "MP"
@@ -155,5 +158,12 @@ class MataPelajaranController extends Controller
         }
         $generatedId = $symbol . $generatedZero . (string)$numberIdAdded; // Add everything
         return $generatedId;
+    }
+
+    private function toArray($data){
+        $data = array_map(function ($value) {
+            return (array)$value;
+        }, $data);
+        return $data;
     }
 }
