@@ -150,7 +150,7 @@ class MataPelajaranController extends Controller
         }
 
         $numberIdAdded = $numberIdStr + 1; // 21
-        if (strlen((string)$numberIdAdded) > strlen((string)$numberIdStr)) $zeroCount -= 1;
+        if (strlen((string)(int)$numberIdAdded) > strlen((string)(int)$numberIdStr)) $zeroCount -= 1;
         $generatedZero = "";
         while ($zeroCount != 0) {
             $generatedZero = $generatedZero . "0";

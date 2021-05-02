@@ -44,6 +44,10 @@ Route::post('mata-pelajaran/update/{id}', [MataPelajaranController::class, 'upda
 Route::delete('mata-pelajaran/delete/{id}', [MataPelajaranController::class, 'destroy']);
 
 Route::get('kelas', [KelasController::class, 'index']);
+Route::get('kelas/{id}', [KelasController::class, 'show']);
+Route::post('kelas/add', [KelasController::class, 'store']);
+Route::post('kelas/update/{id}', [KelasController::class, 'update']);
+Route::delete('kelas/delete/{id}', [KelasController::class, 'destroy']);
 
 Route::get('alokasi-kelas', [AlokasiKelasController::class, 'index']);
 
