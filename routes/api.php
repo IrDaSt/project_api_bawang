@@ -36,6 +36,8 @@ Route::get('guru', [GuruController::class, 'index']);
 Route::get('user', [UserController::class, 'index']);
 Route::get('user/{id}', [UserController::class, 'show']);
 Route::post('user/add', [UserController::class, 'store']);
+Route::post('user/update/{id}', [UserController::class, 'update']);
+Route::delete('user/delete/{id}', [UserController::class, 'destroy']);
 
 Route::get('mata-pelajaran', [MataPelajaranController::class, 'index']);
 Route::get('mata-pelajaran/{id}', [MataPelajaranController::class, 'show']);
