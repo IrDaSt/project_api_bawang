@@ -63,7 +63,14 @@ class KelasController extends Controller
      */
     public function show($id)
     {
-        return Kelas::where('id_kelas', $id)->first();
+        $target = Kelas::where('id_kelas', $id)->first();
+        if(!is_object($target)){
+            return [
+                'message' => 'Data not found',
+                'code' => 500,
+            ];
+        }
+        return $target;
     }
 
     /**

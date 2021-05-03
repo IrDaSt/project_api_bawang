@@ -68,7 +68,14 @@ class MataPelajaranController extends Controller
      */
     public function show($id)
     {
-        return MataPelajaran::where('id_mata_pelajaran', $id)->first();
+        $target = MataPelajaran::where('id_mata_pelajaran', $id)->first();
+        if (!is_object($target)) {
+            return [
+                'message' => 'Data not found',
+                'code' => 500,
+            ];
+        }
+        return $target;
     }
 
     /**
@@ -91,8 +98,10 @@ class MataPelajaranController extends Controller
                 'code' => 500,
             ];
         }
-        $response = DB::update('update mata_pelajaran set name=?, description=? where id_mata_pelajaran=?'
-        , [$request->name, $request->description, $id]);
+        $response = DB::update(
+            'update mata_pelajaran set name=?, description=? where id_mata_pelajaran=?',
+            [$request->name, $request->description, $id]
+        );
         if ($response == 1) {
             return [
                 'message' => 'Update data successful',
@@ -114,7 +123,7 @@ class MataPelajaranController extends Controller
     public function destroy($id)
     {
         $response = MataPelajaran::where('id_mata_pelajaran', $id)->delete();
-        if($response){
+        if ($response) {
             return [
                 'message' => 'Data Deleted Successfully',
                 'code' => 200,
@@ -160,7 +169,8 @@ class MataPelajaranController extends Controller
         return $generatedId;
     }
 
-    private function toArray($data){
+    private function toArray($data)
+    {
         $data = array_map(function ($value) {
             return (array)$value;
         }, $data);

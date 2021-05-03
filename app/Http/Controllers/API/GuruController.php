@@ -38,7 +38,14 @@ class GuruController extends Controller
      */
     public function show($id)
     {
-        //
+        $target = Guru::where('id_guru', $id)->first();
+        if(!is_object($target)){
+            return [
+                'message' => 'Data not found',
+                'code' => 500,
+            ];
+        }
+        return $target;
     }
 
     /**
@@ -71,10 +78,12 @@ class GuruController extends Controller
             insert into guru (id_guru, name, id_user)
             values (?, ?, ?)
             ', [$generateGuruId, $name, $id_user]);
-        if ($responseCreateGuru != 1) {
-            return false;
-        }
-        return true;
+        return $responseCreateGuru;
+    }
+
+    public function deleteByUserId($id_user){
+        $responseDeleteGuru = Guru::where('id_user', $id_user)->delete();
+        return $responseDeleteGuru;
     }
 
     private function generateIdGuru()

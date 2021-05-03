@@ -40,6 +40,12 @@ class MuridController extends Controller
     {
         // $sql = "select * from murid where id_murid='M0001'";
         $target = Murid::where('id_murid', $id)->first();
+        if(!is_object($target)){
+            return [
+                'message' => 'Data not found',
+                'code' => 500,
+            ];
+        }
         return $target;
     }
 
@@ -64,10 +70,7 @@ class MuridController extends Controller
     public function deleteByUserId($id_user)
     {
         $responseDeleteMurid = Murid::where('id_user', $id_user)->delete();
-        if ($responseDeleteMurid != 1) {
-            return false;
-        }
-        return true;
+        return $responseDeleteMurid;
     }
 
     public function updateByUserId($id_user, $name)
@@ -75,10 +78,7 @@ class MuridController extends Controller
         $responseUpdateMurid = DB::update('
             update murid set name=? where id_user=?
             ', [$name, $id_user]);
-        if ($responseUpdateMurid != 1) {
-            return false;
-        }
-        return true;
+        return $responseUpdateMurid;
     }
 
     public function add($name, $id_user)
@@ -88,10 +88,7 @@ class MuridController extends Controller
         insert into murid (id_murid, name, id_user)
         values (?, ?, ?)
         ', [$generatedId, $name, $id_user]);
-        if ($responseCreateMurid != 1) {
-            return false;
-        }
-        return true;
+        return $responseCreateMurid;
     }
 
     private function generateIdMurid()
