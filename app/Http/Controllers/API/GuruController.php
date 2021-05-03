@@ -25,17 +25,9 @@ class GuruController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function add($name, $id_user)
+    public function store(Request $request)
     {
-        $generateGuruId = $this->generateIdGuru();
-        $responseCreateGuru = DB::insert('
-            insert into guru (id_guru, name, id_user)
-            values (?, ?, ?)
-            ', [$generateGuruId, $name, $id_user]);
-        if ($responseCreateGuru != 1) {
-            return false;
-        }
-        return true;
+
     }
 
     /**
@@ -70,6 +62,19 @@ class GuruController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function add($name, $id_user)
+    {
+        $generateGuruId = $this->generateIdGuru();
+        $responseCreateGuru = DB::insert('
+            insert into guru (id_guru, name, id_user)
+            values (?, ?, ?)
+            ', [$generateGuruId, $name, $id_user]);
+        if ($responseCreateGuru != 1) {
+            return false;
+        }
+        return true;
     }
 
     private function generateIdGuru()

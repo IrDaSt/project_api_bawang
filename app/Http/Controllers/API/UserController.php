@@ -72,8 +72,10 @@ class UserController extends Controller
             // Tambah Guru Baru
             $responseCreateGuru = (new GuruController)->add($name, $currentUser['id_user']);
             if($responseCreateGuru == false){
+                // Delete inserted user
+                $this->deleteUserById($currentUser['id_user']);
                 return [
-                    'message' => 'Insert Guru Data error',
+                    'message' => 'Insert Guru Data error, User insert cancelled',
                     'code' => 500,
                 ];
             }
@@ -82,8 +84,10 @@ class UserController extends Controller
             // Tambah Murid Baru
             $responseCreateMurid = (new MuridController)->add($name, $currentUser['id_user']);
             if($responseCreateMurid == false){
+                // Delete inserted user
+                $this->deleteUserById($currentUser['id_user']);
                 return [
-                    'message' => 'Insert Murid Data error',
+                    'message' => 'Insert Murid Data error, User insert cancelled',
                     'code' => 500,
                 ];
             }
@@ -132,26 +136,16 @@ class UserController extends Controller
         }
         $currentUser = $this->show($id);
         // Update User
-        $responseUpdateUser = DB::update('
-        update user
-        set
-        name=?,
-        email=?,
-        password=?,
-        birthdate=?,
-        link_foto=?,
-        izin_edit=?
-        where id_user=?
-        ', [
+        $responseUpdateUser = $this->updateUser(
+            $id,
             $request->name,
             $request->email,
             $request->password,
             $request->birthdate,
             $request->link_foto,
             $request->izin_edit,
-            $id
-        ]);
-        if($responseUpdateUser != 1){
+        );
+        if($responseUpdateUser == false){
             return [
                 'message' => 'Update User Data error',
                 'code' => 500,
@@ -165,8 +159,19 @@ class UserController extends Controller
             update guru set name=? where id_user=?
             ', [$request->name, $id]);
             if($responseUpdateGuru != 1){
+                // Cancel User Update
+                $this->updateUser(
+                    $currentUser['id_user'],
+                    $currentUser['name'],
+                    $currentUser['email'],
+                    $currentUser['password'],
+                    $currentUser['birthdate'],
+                    $currentUser['link_foto'],
+                    $currentUser['izin_edit'],
+                );
+                // Return error message
                 return [
-                    'message' => 'Update Guru Data error',
+                    'message' => 'Update Guru Data error, Cancel Update User data',
                     'code' => 500,
                 ];
             }
@@ -175,8 +180,19 @@ class UserController extends Controller
             // Update Murid
             $responseUpdateMurid = (new MuridController)->updateByUserId($id, $request->name);
             if($responseUpdateMurid == false){
+                // Cancel User Update
+                $this->updateUser(
+                    $currentUser['id_user'],
+                    $currentUser['name'],
+                    $currentUser['email'],
+                    $currentUser['password'],
+                    $currentUser['birthdate'],
+                    $currentUser['link_foto'],
+                    $currentUser['izin_edit'],
+                );
+                // Return error message
                 return [
-                    'message' => 'Update Murid Data error',
+                    'message' => 'Update Murid Data error, Cancel Update User data',
                     'code' => 500,
                 ];
             }
@@ -212,6 +228,18 @@ class UserController extends Controller
             // Delete Data Guru
             $responseDeleteGuru = Guru::where('id_user', $id_user)->delete();
             if($responseDeleteGuru != 1){
+                // Insert again user data
+                $this->insertUserFull(
+                    $target['id_user'],
+                    $target['name'],
+                    $target['email'],
+                    $target['password'],
+                    $target['birthdate'],
+                    $target['id_role'],
+                    $target['link_foto'],
+                    $target['izin_edit']
+                );
+                // Error message
                 return [
                     'message' => 'Failed to Delete Guru Data',
                     'code' => 500,
@@ -222,6 +250,18 @@ class UserController extends Controller
             // Delete Data Murid
             $responseDeleteMurid = (new MuridController)->deleteByUserId($id_user);
             if($responseDeleteMurid == false){
+                // Insert again user data
+                $this->insertUserFull(
+                    $target['id_user'],
+                    $target['name'],
+                    $target['email'],
+                    $target['password'],
+                    $target['birthdate'],
+                    $target['id_role'],
+                    $target['link_foto'],
+                    $target['izin_edit']
+                );
+                // Error message
                 return [
                     'message' => 'Failed to Delete Murid Data',
                     'code' => 500,
@@ -233,6 +273,50 @@ class UserController extends Controller
             'message' => 'Data Deleted Successfully',
             'code' => 200,
         ];
+    }
+
+    private function deleteUserById($id_user){
+        $responseDeleteUser = User::where('id_user', $id_user)->delete();
+        if($responseDeleteUser == 0){
+            return false;
+        }
+        return true;
+    }
+
+    private function updateUser($id_user, $name, $email, $password, $birthdate, $link_foto, $izin_edit){
+        $responseUpdateUser = DB::update('
+        update user
+        set
+        name=?,
+        email=?,
+        password=?,
+        birthdate=?,
+        link_foto=?,
+        izin_edit=?
+        where id_user=?
+        ', [
+            $name,
+            $email,
+            $password,
+            $birthdate,
+            $link_foto,
+            $izin_edit,
+            $id_user
+        ]);
+        if($responseUpdateUser == 0){
+            return false;
+        }
+        return true;
+    }
+
+    private function insertUserFull($id_user, $name, $email, $password, $birthdate, $id_role, $link_foto, $izin_edit){
+        $responseCreateUser = DB::insert('
+        insert into user (id_user, email, password, name, birthdate, id_role, link_foto, izin_edit) values (?, ?, ?, ?, ?, ?, ?)
+        ', [$id_user, $email, $password, $name, $birthdate, $id_role, $link_foto, $izin_edit]);
+        if($responseCreateUser == 0){
+            return false;
+        }
+        return true;
     }
 
     private function getLastUserData()
