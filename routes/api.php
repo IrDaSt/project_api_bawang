@@ -52,5 +52,9 @@ Route::post('kelas/update/{id}', [KelasController::class, 'update']);
 Route::delete('kelas/delete/{id}', [KelasController::class, 'destroy']);
 
 Route::get('alokasi-kelas', [AlokasiKelasController::class, 'index']);
+Route::get('alokasi-kelas/{id}', [AlokasiKelasController::class, 'show']);
+Route::post('alokasi-kelas/add', [AlokasiKelasController::class, 'store']);
+Route::post('alokasi-kelas/update/{id}', [AlokasiKelasController::class, 'update']);
+Route::delete('alokasi-kelas/delete/{id}', [AlokasiKelasController::class, 'destroy']);
 
 Route::get('notification', [NotificationController::class, 'index']);
