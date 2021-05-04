@@ -166,13 +166,13 @@ class AlokasiKelasController extends Controller
             array_push($updateValue, $nilai_akhir);
         }
 
-        array_push($updateValue, $id);
+        // array_push($updateValue, $id);
 
         $response = DB::update("
         update alokasi_kelas
         set
         $setParam
-        where id_alokasi=?", $updateValue);
+        where id_alokasi=?", [...$updateValue, $id]);
 
         if (!$response) {
             return [
