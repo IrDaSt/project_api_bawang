@@ -58,3 +58,8 @@ Route::post('alokasi-kelas/update/{id}', [AlokasiKelasController::class, 'update
 Route::delete('alokasi-kelas/delete/{id}', [AlokasiKelasController::class, 'destroy']);
 
 Route::get('notification', [NotificationController::class, 'index']);
+Route::get('notification/id/{id}', [NotificationController::class, 'show']);
+Route::get('notification/sent-by/{id}', [NotificationController::class, 'showAllSendBy']);
+Route::get('notification/sent-to/{id}', [NotificationController::class, 'showAllSendTo']);
+Route::post('notification/add', [NotificationController::class, 'store']);
+Route::post('notification/set-read/{id}', [NotificationController::class, 'setAsRead']);
